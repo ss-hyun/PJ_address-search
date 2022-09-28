@@ -66,7 +66,7 @@ public class RoadAddrApiController {
             if (searchBldgNumber != null) {
 
                 // 건물번호가 본번 형태인지 부번 형태인지 '-' 을 기준으로 확인해야 합니다.
-                String[] bldgNumberArray = ??;
+                String[] bldgNumberArray = searchRoadAddress.split("-");
 
                 // 건물번호가 본번만 입력된 형태라면 (예 : 흑석로 84)
                 if (bldgNumberArray.length == 1) {
@@ -79,10 +79,10 @@ public class RoadAddrApiController {
 
                 }
                 // 건물번호가 본번,부번 모두 입력된 형태라면 (예 : 흑석로 84-116)
-                else if (bldgNumberArray.length == ??) {
+                else if (bldgNumberArray.length == 2) {
 
                     // 건물번호(본번/부번)이 문자로 되어 있으므로 숫자로 바꿔야 합니다. (DB는 숫자컬럼으로 되어 있음)
-                    buildingMainNumber = ??;
+                    buildingMainNumber = Integer.parseInt(bldgNumberArray[0]);
                     buildingSubNumber = Integer.parseInt(bldgNumberArray[1]);
 
                     // 도로명 검색어를 = 로 하여 건물본번, 건물부번 모두가 일치하는 도로명 주소를 찾습니다.
@@ -100,14 +100,14 @@ public class RoadAddrApiController {
             searchResultListSize = searchResultList.size(); // 최종적으로 DB에서 도로명 주소를 찾은 결과의 갯수
 
             // 도로명 주소가 검색된 결과가 없다면.
-            if (searchResultListSize == ??) {
+            if (searchResultListSize == 0) {
                 resultStatus = HttpStatus.NOT_FOUND; // HTTP Status 코드는 NOT_FOUND 로 합니다. (404)
             }
 
 
 
             returnMap.put(resMsg, "정상처리되었습니다.");    // return 메세지는 "정상" 으로 하고
-            returnMap.put(resRoadAddr, ??);  // return 주소정보는 조회 결과를 넣습니다.
+            returnMap.put(resRoadAddr, searchResultList);  // return 주소정보는 조회 결과를 넣습니다.
             returnMap.put(resCnt, searchResultListSize); // return 건수정보는 조회 결과의 건수를 넣습니다.
 
 //            throw new Exception();
@@ -126,8 +126,8 @@ public class RoadAddrApiController {
         // 예외여부 상관없이 최종적으로 수행.
         finally {
             entity = new ResponseEntity<>(returnMap, resultStatus);  // 최종적으로 API 결과 ResponseEntity 객체를 생성합니다.
-
-            return entity;  // API 반환.
         }
+
+        return entity;  // API 반환.
     }
 }
